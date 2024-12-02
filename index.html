@@ -1,0 +1,293 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pallet Requirement Calculator</title>
+    <style>
+
+
+
+
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f8fc;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(90deg, #0056b3, #ff3b3f);
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h3 {
+            margin-bottom: 15px;
+            color: #0056b3;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .form-row > div {
+            flex: 1;
+        }
+        .sku {
+            border-top: 2px solid #0056b3;
+            margin-top: 20px;
+            padding-top: 20px;
+            position: relative;
+        }
+        .sku-label {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 10px;
+            color: #333;
+        }
+        .delete-btn {
+            background-color: #ff3b3f;
+            color: white;
+            font-size: 14px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .delete-btn:hover {
+            background-color: #d63031;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            font-size: 16px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 15px 0;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #004494;
+        }
+        .add-sku-btn {
+            background-color: #28a745;
+        }
+        .add-sku-btn:hover {
+            background-color: #218838;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: #0056b3;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-row {
+                flex-direction: column;
+            }
+        }
+
+        .delete-btn {
+    max-width: 100px !important;
+    margin: 20px !important;
+  }
+
+
+  #skuContainer div:has(input) {
+    margin: 10px !important;
+  }
+
+
+  .form-row {
+    padding: 15px !important;
+  }
+
+
+  select, input {
+    height: 45px !important;
+    padding: 0px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+    font-size: 18px !important;
+  }
+
+
+  .add-sku-btn {
+    max-width: 180px !important;
+  }
+
+  [onclick="calculatePallets()"] {
+    max-width: 300px !important;
+    margin: auto !important;
+    height: 70px !important;
+    font-size: 20px;
+  }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Pallet Requirement Calculator</h1>
+    </header>
+    <main>
+        <form id="palletCalculatorForm">
+            <h3>General Pallet Information</h3>
+            <div class="form-row">
+                <div>
+                    <label for="palletBase">Pallet Base (Inches):</label>
+                    <select id="palletBase" name="palletBase" required>
+                        <option value="40x48">40 x 48"</option>
+                        <option value="32x48">32 x 48"</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="maxPalletHeight">Maximum Pallet Height (Inches):</label>
+                    <input type="number" id="maxPalletHeight" name="maxPalletHeight" required>
+                </div>
+            </div>
+
+            <h3>Carton Details</h3>
+            <div id="skuContainer">
+                <div class="sku form-row" data-sku="1">
+                    <span class="sku-label">SKU #1</span>
+                    <div>
+                        <label for="sku1Length">Carton Length:</label>
+                        <input type="number" id="sku1Length" name="skuLength" required>
+                    </div>
+                    <div>
+                        <label for="sku1Width">Carton Width:</label>
+                        <input type="number" id="sku1Width" name="skuWidth" required>
+                    </div>
+                    <div>
+                        <label for="sku1Height">Carton Height:</label>
+                        <input type="number" id="sku1Height" name="skuHeight" required>
+                    </div>
+                    <div>
+                        <label for="sku1Quantity">Total Cartons:</label>
+                        <input type="number" id="sku1Quantity" name="skuQuantity" required>
+                    </div>
+                    <button type="button" class="delete-btn" onclick="deleteSKU(this)">Delete</button>
+                </div>
+            </div>
+            <button type="button" class="add-sku-btn" onclick="addSKU()">Add Another SKU</button>
+            <button type="button" onclick="calculatePallets()">Calculate Pallets</button>
+        </form>
+        <div id="result" class="result"></div>
+    </main>
+
+    <script>
+        let skuCount = 1;
+
+        function addSKU() {
+            skuCount++;
+            const skuContainer = document.getElementById('skuContainer');
+            const newSku = document.createElement('div');
+            newSku.classList.add('sku', 'form-row');
+            newSku.setAttribute('data-sku', skuCount);
+            newSku.innerHTML = `
+                <span class="sku-label">SKU #${skuCount}</span>
+                <div>
+                    <label for="sku${skuCount}Length">Carton Length:</label>
+                    <input type="number" id="sku${skuCount}Length" name="skuLength" required>
+                </div>
+                <div>
+                    <label for="sku${skuCount}Width">Carton Width:</label>
+                    <input type="number" id="sku${skuCount}Width" name="skuWidth" required>
+                </div>
+                <div>
+                    <label for="sku${skuCount}Height">Carton Height:</label>
+                    <input type="number" id="sku${skuCount}Height" name="skuHeight" required>
+                </div>
+                <div>
+                    <label for="sku${skuCount}Quantity">Total Cartons:</label>
+                    <input type="number" id="sku${skuCount}Quantity" name="skuQuantity" required>
+                </div>
+                <button type="button" class="delete-btn" onclick="deleteSKU(this)">Delete</button>
+            `;
+            skuContainer.appendChild(newSku);
+        }
+
+        function deleteSKU(button) {
+            const skuRow = button.parentElement;
+            skuRow.remove();
+            skuCount--
+        }
+
+        function calculatePallets() {
+            const palletBase = document.getElementById('palletBase').value;
+            const maxPalletHeight = parseFloat(document.getElementById('maxPalletHeight').value);
+
+            const [palletLength, palletWidth] = palletBase.split('x').map(Number);
+
+            if (isNaN(palletLength) || isNaN(palletWidth) || isNaN(maxPalletHeight) || maxPalletHeight <= 0) {
+                document.getElementById('result').textContent = "Please select a pallet size and enter valid maximum height.";
+                return;
+            }
+
+            let totalPallets = 0;
+
+            const skus = document.querySelectorAll('.sku');
+            for (const sku of skus) {
+                const length = parseFloat(sku.querySelector(`[name="skuLength"]`).value);
+                const width = parseFloat(sku.querySelector(`[name="skuWidth"]`).value);
+                const height = parseFloat(sku.querySelector(`[name="skuHeight"]`).value);
+                const quantity = parseInt(sku.querySelector(`[name="skuQuantity"]`).value);
+
+                if (isNaN(length) || isNaN(width) || isNaN(height) || isNaN(quantity) || length <= 0 || width <= 0 || height <= 0 || quantity <= 0) {
+                    document.getElementById('result').textContent = "Invalid input in one or more SKUs. Please check your data.";
+                    return;
+                }
+
+                const cartonsPerLayer = Math.floor(palletLength / length) * Math.floor(palletWidth / width);
+                const layersPerPallet = Math.floor(maxPalletHeight / height);
+
+                if (cartonsPerLayer === 0 || layersPerPallet === 0) {
+                    document.getElementById('result').textContent = "One or more SKUs exceed the pallet dimensions.";
+                    return;
+                }
+
+                const cartonsPerPallet = cartonsPerLayer * layersPerPallet;
+                totalPallets += Math.ceil(quantity / cartonsPerPallet);
+            }
+
+            document.getElementById('result').textContent = `You will need approximately ${totalPallets} pallet(s).`;
+        }
+    </script>
+</body>
+</html>
